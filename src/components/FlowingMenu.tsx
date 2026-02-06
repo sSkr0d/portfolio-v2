@@ -45,7 +45,7 @@ const FlowingMenu: React.FC<FlowingMenuProps> = ({
     if (!item) return null;
 
     return (
-      <div className={layoutClassName}>
+      <div className={`${layoutClassName} overflow-hidden rounded-2xl`}>
         <MenuItem
           {...item}
           speed={speed}
@@ -60,21 +60,24 @@ const FlowingMenu: React.FC<FlowingMenuProps> = ({
   };
 
   return (
-    <div className={`w-full h-full overflow-hidden ${className}`.trim()} style={{ backgroundColor: bgColor }}>
+    <div className={`w-full h-full overflow-hidden bg-transparent ${className}`.trim()}>
       <nav className="grid h-full w-full grid-cols-6 grid-rows-3 gap-3">
-        {renderItem('About', 'col-span-4 row-span-1 border rounded-2xl')}
+        {renderItem('About', 'col-span-4 row-span-1')}
         <div
-          className="col-span-2 row-span-1 flex items-center justify-center rounded-2xl border border-dashed text-xs uppercase tracking-[0.35em] text-muted-foreground"
-          style={{ borderColor }}
+          className="col-span-2 row-span-1 relative flex items-center justify-center overflow-hidden rounded-2xl border border-border bg-gray-200/50 backdrop-blur-md dark:bg-black/50 dark:backdrop-blur-md"
           aria-hidden="true"
         >
-          Placeholder
+          <span className="relative z-10 text-xs uppercase tracking-[0.35em] text-muted-foreground">Placeholder</span>
+          <div
+            className="pointer-events-none absolute inset-0 z-20 rounded-2xl bg-[url('/noise.webp')] bg-repeat bg-size-[200px_200px] opacity-15"
+            aria-hidden
+          />
         </div>
-        {renderItem('Experience', 'col-span-3 row-span-1 border rounded-2xl')}
-        {renderItem('Education', 'col-span-3 row-span-1 border rounded-2xl')}
-        {renderItem('Skills', 'col-span-2 row-span-1 border rounded-2xl')}
-        {renderItem('Projects', 'col-span-2 row-span-1 border rounded-2xl')}
-        {renderItem('Contact', 'col-span-2 row-span-1 border rounded-2xl')}
+        {renderItem('Experience', 'col-span-3 row-span-1')}
+        {renderItem('Education', 'col-span-3 row-span-1')}
+        {renderItem('Skills', 'col-span-2 row-span-1')}
+        {renderItem('Projects', 'col-span-2 row-span-1')}
+        {renderItem('Contact', 'col-span-2 row-span-1')}
       </nav>
     </div>
   );
@@ -179,27 +182,24 @@ const MenuItem: React.FC<MenuItemProps> = ({
 
   return (
     <div
-      className={`relative flex h-full w-full overflow-hidden text-center ${className}`.trim()}
+      className={`relative flex h-full w-full overflow-hidden rounded-2xl bg-gray-200/50 text-center backdrop-blur-md dark:bg-black/50 dark:backdrop-blur-md ${showBorder ? 'border border-border' : 'border-0'} ${className}`.trim()}
       ref={itemRef}
-      style={{ border: showBorder ? `1px solid ${borderColor}` : 'none' }}
     >
       <a
-        className="flex items-center justify-center w-full h-full relative cursor-pointer uppercase no-underline font-semibold text-[4vh]"
+        className="relative z-10 flex h-full w-full items-center justify-center font-semibold uppercase no-underline text-foreground cursor-pointer text-[4vh]"
         href={link}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
-        style={{ color: textColor }}
       >
         {text}
       </a>
       <div
-        className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none translate-y-[101%]"
+        className="absolute top-0 left-0 z-10 w-full h-full overflow-hidden pointer-events-none translate-y-[101%] bg-black text-white dark:bg-white dark:text-black"
         ref={marqueeRef}
-        style={{ backgroundColor: marqueeBgColor }}
       >
-        <div className="h-full w-fit flex" ref={marqueeInnerRef}>
+        <div className="h-full w-fit flex text-inherit" ref={marqueeInnerRef}>
           {[...Array(safeRepetitions)].map((_, idx) => (
-            <div className="marquee-part flex items-center shrink-0" key={idx} style={{ color: marqueeTextColor }}>
+            <div className="marquee-part flex items-center shrink-0 text-inherit" key={idx}>
               <span className="whitespace-nowrap uppercase font-normal text-[4vh] leading-none px-[1vw]">{text}</span>
               <div
                 className="w-[200px] h-[7vh] my-[2em] mx-[2vw] py-[1em] rounded-[50px] bg-cover bg-center"
@@ -209,6 +209,10 @@ const MenuItem: React.FC<MenuItemProps> = ({
           ))}
         </div>
       </div>
+      <div
+        className="pointer-events-none absolute inset-0 z-20 rounded-2xl bg-[url('/noise.webp')] bg-repeat bg-size-[200px_200px] opacity-15"
+        aria-hidden
+      />
     </div>
   );
 };

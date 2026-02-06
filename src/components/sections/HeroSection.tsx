@@ -84,24 +84,8 @@ export function HeroSection() {
   return (
     <section
       id="hero"
-      className="relative flex min-h-screen flex-col items-center overflow-hidden px-6 py-24 lg:flex-row lg:items-stretch lg:justify-between lg:gap-12"
+      className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden px-6 py-12 lg:flex-row lg:items-center lg:justify-center lg:gap-12"
     >
-      <motion.div
-        className="absolute inset-0 -z-10 opacity-40"
-        variants={float}
-        initial="initial"
-        animate="animate"
-        aria-hidden
-      >
-        <div
-          className={cn(
-            "absolute left-1/2 top-1/3 size-[400px] -translate-x-1/2 -translate-y-1/2 rounded-full",
-            "bg-linear-to-br from-(--gradient-accent-start) to-(--gradient-accent-end)",
-            "blur-[120px]",
-          )}
-        />
-      </motion.div>
-
       <div className="mx-auto flex w-full max-w-6xl flex-col gap-10 lg:flex-row lg:items-stretch lg:justify-between lg:gap-12">
         {/* Left: Comet Card (profile / Pokemon-style card) */}
         <motion.div
@@ -208,15 +192,7 @@ export function HeroSection() {
           className="hidden flex-1 overflow-hidden lg:flex lg:min-h-0"
           style={menuHeight ? { height: menuHeight } : undefined}
         >
-          <FlowingMenu
-            items={flowingMenuItems}
-            textColor="hsl(var(--foreground))"
-            bgColor="hsl(var(--muted))"
-            marqueeBgColor="#000000"
-            marqueeTextColor="hsl(var(--primary-foreground))"
-            borderColor="hsl(var(--border))"
-            className="h-full w-full"
-          />
+          <FlowingMenu items={flowingMenuItems} className="h-full w-full" />
         </div>
       </div>
     </section>

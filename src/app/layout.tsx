@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { HeroInViewProvider } from "@/components/HeroInViewProvider";
 import { Navbar } from "@/components/Navbar";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -38,8 +39,10 @@ export default function RootLayout({
             Skip to content
           </a>
           <TooltipProvider>
-            <Navbar />
-            {children}
+            <HeroInViewProvider>
+              <Navbar />
+              {children}
+            </HeroInViewProvider>
           </TooltipProvider>
         </ThemeProvider>
       </body>

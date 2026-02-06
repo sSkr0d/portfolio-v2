@@ -11,6 +11,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import { useHeroInView } from "@/components/HeroInViewProvider";
 import { cn } from "@/lib/utils";
 import { ThemeToggle } from "@/components/ThemeToggle";
 
@@ -43,9 +44,17 @@ function NavLinks({ className, onLinkClick }: { className?: string; onLinkClick?
 
 export function Navbar() {
   const [open, setOpen] = useState(false);
+  const { isHeroInView } = useHeroInView();
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60">
+    <header
+      className={cn(
+        "fixed top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60 transition-fade-in duration-200",
+        isHeroInView
+          ? "overflow-hidden border-transparent opacity-0 pointer-events-none"
+          : "opacity-100"
+      )}
+    >
       <div className="mx-auto flex h-14 max-w-5xl items-center justify-between px-4">
         <Link
           href="#hero"

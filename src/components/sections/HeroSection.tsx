@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { motion } from "framer-motion";
+import { useEffect, useRef, useState } from "react";
 import { ArrowDown, Briefcase, Github, Linkedin, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -58,6 +59,28 @@ const flowingMenuItems = [
 ];
 
 export function HeroSection() {
+  const cardRef = useRef<HTMLDivElement>(null);
+  const [menuHeight, setMenuHeight] = useState<number | null>(null);
+
+  useEffect(() => {
+    if (!cardRef.current) return;
+
+    const updateHeight = () => {
+      if (!cardRef.current) return;
+      setMenuHeight(cardRef.current.offsetHeight);
+    };
+
+    updateHeight();
+    const observer = new ResizeObserver(updateHeight);
+    observer.observe(cardRef.current);
+    window.addEventListener("resize", updateHeight);
+
+    return () => {
+      observer.disconnect();
+      window.removeEventListener("resize", updateHeight);
+    };
+  }, []);
+
   return (
     <section
       id="hero"
@@ -73,7 +96,7 @@ export function HeroSection() {
         <div
           className={cn(
             "absolute left-1/2 top-1/3 size-[400px] -translate-x-1/2 -translate-y-1/2 rounded-full",
-            "bg-gradient-to-br from-[var(--gradient-accent-start)] to-[var(--gradient-accent-end)]",
+            "bg-linear-to-br from-(--gradient-accent-start) to-(--gradient-accent-end)",
             "blur-[120px]",
           )}
         />
@@ -88,7 +111,7 @@ export function HeroSection() {
           whileInView="visible"
           viewport={viewportOnce}
         >
-          <motion.div variants={staggerItem}>
+          <motion.div variants={staggerItem} ref={cardRef}>
             <CometCard className="w-[280px] max-w-[320px] sm:w-[300px]">
               <div className="relative overflow-hidden rounded-2xl border bg-card text-card-foreground shadow-xl">
                 <div className="p-4">
@@ -169,9 +192,6 @@ export function HeroSection() {
             className="mt-6 flex flex-col items-center gap-2 lg:hidden"
             variants={staggerItem}
           >
-            <Badge variant="secondary" className="text-xs">
-              Available for work
-            </Badge>
             <a
               href="#about"
               className="flex flex-col items-center gap-1 text-muted-foreground transition-colors hover:text-foreground"
@@ -184,12 +204,15 @@ export function HeroSection() {
         </motion.div>
 
         {/* Right: Flowing Menu (desktop only) */}
-        <div className="hidden min-h-[60vh] flex-1 overflow-hidden rounded-2xl border bg-muted/30 lg:flex lg:min-h-[70vh]">
+        <div
+          className="hidden flex-1 overflow-hidden lg:flex lg:min-h-0"
+          style={menuHeight ? { height: menuHeight } : undefined}
+        >
           <FlowingMenu
             items={flowingMenuItems}
             textColor="hsl(var(--foreground))"
             bgColor="hsl(var(--muted))"
-            marqueeBgColor="hsl(var(--primary))"
+            marqueeBgColor="#000000"
             marqueeTextColor="hsl(var(--primary-foreground))"
             borderColor="hsl(var(--border))"
             className="h-full w-full"

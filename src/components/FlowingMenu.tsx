@@ -24,7 +24,8 @@ interface MenuItemProps extends MenuItemData {
   marqueeBgColor: string;
   marqueeTextColor: string;
   borderColor: string;
-  isFirst: boolean;
+  className?: string;
+  showBorder?: boolean;
 }
 
 const FlowingMenu: React.FC<FlowingMenuProps> = ({
@@ -37,21 +38,43 @@ const FlowingMenu: React.FC<FlowingMenuProps> = ({
   borderColor = '#fff',
   className = ''
 }) => {
+  const itemLookup = new Map(items.map((item) => [item.text.toLowerCase(), item]));
+
+  const renderItem = (label: string, layoutClassName: string) => {
+    const item = itemLookup.get(label.toLowerCase());
+    if (!item) return null;
+
+    return (
+      <div className={layoutClassName}>
+        <MenuItem
+          {...item}
+          speed={speed}
+          textColor={textColor}
+          marqueeBgColor={marqueeBgColor}
+          marqueeTextColor={marqueeTextColor}
+          borderColor={borderColor}
+          className="h-full w-full rounded-2xl"
+        />
+      </div>
+    );
+  };
+
   return (
     <div className={`w-full h-full overflow-hidden ${className}`.trim()} style={{ backgroundColor: bgColor }}>
-      <nav className="flex flex-col h-full m-0 p-0">
-        {items.map((item, idx) => (
-          <MenuItem
-            key={idx}
-            {...item}
-            speed={speed}
-            textColor={textColor}
-            marqueeBgColor={marqueeBgColor}
-            marqueeTextColor={marqueeTextColor}
-            borderColor={borderColor}
-            isFirst={idx === 0}
-          />
-        ))}
+      <nav className="grid h-full w-full grid-cols-6 grid-rows-3 gap-3">
+        {renderItem('About', 'col-span-4 row-span-1 border rounded-2xl')}
+        <div
+          className="col-span-2 row-span-1 flex items-center justify-center rounded-2xl border border-dashed text-xs uppercase tracking-[0.35em] text-muted-foreground"
+          style={{ borderColor }}
+          aria-hidden="true"
+        >
+          Placeholder
+        </div>
+        {renderItem('Experience', 'col-span-3 row-span-1 border rounded-2xl')}
+        {renderItem('Education', 'col-span-3 row-span-1 border rounded-2xl')}
+        {renderItem('Skills', 'col-span-2 row-span-1 border rounded-2xl')}
+        {renderItem('Projects', 'col-span-2 row-span-1 border rounded-2xl')}
+        {renderItem('Contact', 'col-span-2 row-span-1 border rounded-2xl')}
       </nav>
     </div>
   );
@@ -66,13 +89,15 @@ const MenuItem: React.FC<MenuItemProps> = ({
   marqueeBgColor,
   marqueeTextColor,
   borderColor,
-  isFirst
+  className = '',
+  showBorder = true
 }) => {
   const itemRef = useRef<HTMLDivElement>(null);
   const marqueeRef = useRef<HTMLDivElement>(null);
   const marqueeInnerRef = useRef<HTMLDivElement>(null);
   const animationRef = useRef<gsap.core.Tween | null>(null);
   const [repetitions, setRepetitions] = useState(4);
+  const safeRepetitions = Number.isFinite(repetitions) && repetitions > 0 ? repetitions : 4;
 
   const animationDefaults = { duration: 0.6, ease: 'expo' };
 
@@ -88,9 +113,11 @@ const MenuItem: React.FC<MenuItemProps> = ({
       const marqueeContent = marqueeInnerRef.current.querySelector('.marquee-part') as HTMLElement;
       if (!marqueeContent) return;
       const contentWidth = marqueeContent.offsetWidth;
+      if (contentWidth <= 0) return;
       const viewportWidth = window.innerWidth;
       const needed = Math.ceil(viewportWidth / contentWidth) + 2;
-      setRepetitions(Math.max(4, needed));
+      const safeNeeded = Number.isFinite(needed) ? Math.max(4, needed) : 4;
+      setRepetitions(safeNeeded);
     };
 
     calculateRepetitions();
@@ -152,12 +179,12 @@ const MenuItem: React.FC<MenuItemProps> = ({
 
   return (
     <div
-      className="flex-1 relative overflow-hidden text-center"
+      className={`relative flex h-full w-full overflow-hidden text-center ${className}`.trim()}
       ref={itemRef}
-      style={{ borderTop: isFirst ? 'none' : `1px solid ${borderColor}` }}
+      style={{ border: showBorder ? `1px solid ${borderColor}` : 'none' }}
     >
       <a
-        className="flex items-center justify-center h-full relative cursor-pointer uppercase no-underline font-semibold text-[4vh]"
+        className="flex items-center justify-center w-full h-full relative cursor-pointer uppercase no-underline font-semibold text-[4vh]"
         href={link}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
@@ -171,9 +198,9 @@ const MenuItem: React.FC<MenuItemProps> = ({
         style={{ backgroundColor: marqueeBgColor }}
       >
         <div className="h-full w-fit flex" ref={marqueeInnerRef}>
-          {[...Array(repetitions)].map((_, idx) => (
-            <div className="marquee-part flex items-center flex-shrink-0" key={idx} style={{ color: marqueeTextColor }}>
-              <span className="whitespace-nowrap uppercase font-normal text-[4vh] leading-[1] px-[1vw]">{text}</span>
+          {[...Array(safeRepetitions)].map((_, idx) => (
+            <div className="marquee-part flex items-center shrink-0" key={idx} style={{ color: marqueeTextColor }}>
+              <span className="whitespace-nowrap uppercase font-normal text-[4vh] leading-none px-[1vw]">{text}</span>
               <div
                 className="w-[200px] h-[7vh] my-[2em] mx-[2vw] py-[1em] rounded-[50px] bg-cover bg-center"
                 style={{ backgroundImage: `url(${image})` }}

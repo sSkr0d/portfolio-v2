@@ -12,6 +12,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 const navLinks = [
   { href: "#hero", label: "Home" },
@@ -52,8 +53,9 @@ export function Navbar() {
         >
           Portfolio
         </Link>
-        <div className="hidden md:block">
+        <div className="hidden items-center gap-2 md:flex">
           <NavLinks />
+          <ThemeToggle />
         </div>
         <Sheet open={open} onOpenChange={setOpen}>
           <SheetTrigger asChild className="md:hidden">
@@ -69,6 +71,9 @@ export function Navbar() {
               className="mt-8 flex flex-col gap-2"
               onLinkClick={() => setOpen(false)}
             />
+            <div className="mt-6">
+              <ThemeToggle />
+            </div>
           </SheetContent>
         </Sheet>
       </div>

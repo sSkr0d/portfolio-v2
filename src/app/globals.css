@@ -127,3 +127,11 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* CometCard 3D tilt: perspective and preserve-3d */
+.perspective-distant {
+  perspective: 1200px;
+}
+.transform-3d {
+  transform-style: preserve-3d;
+}

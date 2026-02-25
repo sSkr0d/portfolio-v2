@@ -2,8 +2,16 @@
 
 import Image from "next/image";
 import { motion } from "framer-motion";
-import { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { ArrowDown, Briefcase, Github, Linkedin, MapPin } from "lucide-react";
+import {
+  IdentificationCardIcon,
+  BriefcaseIcon,
+  GraduationCapIcon,
+  HeadCircuitIcon,
+  GithubLogoIcon,
+  EnvelopeSimpleIcon,
+} from "@phosphor-icons/react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { CometCard } from "@/components/ui/comet-card";
@@ -32,6 +40,33 @@ const flowingMenuItems = [
   { link: "#skills", text: "Skills" },
   { link: "#projects", text: "Projects" },
   { link: "#contact", text: "Contact" },
+];
+
+const mobileBubbles = [
+  { text: "About", link: "#about", Icon: IdentificationCardIcon, color: "#6366f1" },
+  { text: "Experience", link: "#experience", Icon: BriefcaseIcon, color: "#8b5cf6" },
+  { text: "Education", link: "#education", Icon: GraduationCapIcon, color: "#7c3aed" },
+  { text: "Skills", link: "#skills", Icon: HeadCircuitIcon, color: "#06b6d4" },
+  { text: "Projects", link: "#projects", Icon: GithubLogoIcon, color: "#5b21b6" },
+  { text: "Contact", link: "#contact", Icon: EnvelopeSimpleIcon, color: "#4c1d95" },
+];
+
+const orbitPositions: React.CSSProperties[] = [
+  { top: -60, left: "15%" },
+  { top: -76, left: "50%" },
+  { top: -60, left: "85%" },
+  { bottom: -60, left: "15%" },
+  { bottom: -76, left: "50%" },
+  { bottom: -60, left: "85%" },
+];
+
+const wanderPaths = [
+  { x: [0, 3, -4, 5, -2, 1, 0], y: [0, -5, 2, -3, 6, -1, 0] },
+  { x: [0, -3, 5, -2, 4, -4, 0], y: [0, 4, -6, 1, -4, 3, 0] },
+  { x: [0, 4, -3, 2, -5, 3, 0], y: [0, -3, 5, -6, 2, -2, 0] },
+  { x: [0, -5, 2, -3, 4, -1, 0], y: [0, 3, -4, 5, -2, 4, 0] },
+  { x: [0, 2, -5, 3, -1, 4, 0], y: [0, -6, 3, -2, 5, -3, 0] },
+  { x: [0, -2, 4, -5, 1, -3, 0], y: [0, 5, -3, 4, -5, 2, 0] },
 ];
 
 export function HeroSection() {
@@ -72,84 +107,149 @@ export function HeroSection() {
           viewport={viewportOnce}
         >
           <motion.div variants={staggerItem} ref={cardRef}>
-            <CometCard className="w-[280px] max-w-[320px] sm:w-[300px]">
-              <div className="relative overflow-hidden rounded-2xl border bg-card text-card-foreground shadow-xl">
-                <div className="p-4">
-                  <div className="relative w-full overflow-hidden rounded-xl bg-muted min-h-[200px]">
-                    <Image
-                      src="/profilepic.png"
-                      alt={`Profile photo of ${name}`}
-                      className="object-cover object-center opacity-100"
-                      fill
-                      priority
-                    />
-                    {/* Decorative Elements */}
-                    <div className="absolute top-2 right-2 flex gap-1">
-                      <div className="w-6 h-6 rounded-full bg-yellow-400/80 backdrop-blur-sm border border-white/20 flex items-center justify-center text-[10px] font-bold text-black shadow-lg">
-                        ⚡
+            <div className="relative">
+              <CometCard className="relative z-10 w-[280px] max-w-[320px] sm:w-[300px]">
+                <div className="relative overflow-hidden rounded-2xl border bg-card text-card-foreground shadow-xl">
+                  <div className="p-4">
+                    <div className="relative w-full overflow-hidden rounded-xl bg-muted min-h-[200px]">
+                      <Image
+                        src="/profilepic.png"
+                        alt={`Profile photo of ${name}`}
+                        className="object-cover object-center opacity-100"
+                        fill
+                        priority
+                      />
+                      <div className="absolute top-2 right-2 flex gap-1">
+                        <div className="w-6 h-6 rounded-full bg-yellow-400/80 backdrop-blur-sm border border-white/20 flex items-center justify-center text-[10px] font-bold text-black shadow-lg">
+                          ⚡
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-                <div className="space-y-2 px-4 pb-4">
-                  <h1 className="text-lg font-semibold leading-tight tracking-tight text-foreground sm:text-xl">
-                    {name}
-                  </h1>
-                  <p className="text-xs font-semibold uppercase tracking-[0.35em] text-muted-foreground">
-                    {role}
-                  </p>
-                  <div className="mt-3 space-y-2 text-sm text-muted-foreground">
-                    <div className="flex items-center gap-2">
-                      <MapPin className="size-4 text-primary" />
-                      <span>{location}</span>
+                  <div className="space-y-2 px-4 pb-4">
+                    <h1 className="text-lg font-semibold leading-tight tracking-tight text-foreground sm:text-xl">
+                      {name}
+                    </h1>
+                    <p className="text-xs font-semibold uppercase tracking-[0.35em] text-muted-foreground">
+                      {role}
+                    </p>
+                    <div className="mt-3 space-y-2 text-sm text-muted-foreground">
+                      <div className="flex items-center gap-2">
+                        <MapPin className="size-4 text-primary" />
+                        <span>{location}</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Briefcase className="size-4 text-primary" />
+                        <span>{workStatus}</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className="size-2 rounded-full bg-emerald-400 shadow-[0_0_6px_rgba(16,185,129,0.6)]" />
+                        <span>{onlineStatus}</span>
+                      </div>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <Briefcase className="size-4 text-primary" />
-                      <span>{workStatus}</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <span className="size-2 rounded-full bg-emerald-400 shadow-[0_0_6px_rgba(16,185,129,0.6)]" />
-                      <span>{onlineStatus}</span>
+                    <div className="mt-4 grid grid-cols-2 gap-3">
+                      <Button
+                        asChild
+                        variant="outline"
+                        size="sm"
+                        className="justify-center gap-2 rounded-full"
+                      >
+                        <a
+                          href={githubUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          <Github className="size-4" />
+                          GitHub
+                        </a>
+                      </Button>
+                      <Button
+                        asChild
+                        variant="outline"
+                        size="sm"
+                        className="justify-center gap-2 rounded-full"
+                      >
+                        <a
+                          href={linkedinUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          <Linkedin className="size-4" />
+                          LinkedIn
+                        </a>
+                      </Button>
                     </div>
                   </div>
-                  <div className="mt-4 grid grid-cols-2 gap-3">
-                    <Button
-                      asChild
-                      variant="outline"
-                      size="sm"
-                      className="justify-center gap-2 rounded-full"
-                    >
-                      <a
-                        href={githubUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        <Github className="size-4" />
-                        GitHub
-                      </a>
-                    </Button>
-                    <Button
-                      asChild
-                      variant="outline"
-                      size="sm"
-                      className="justify-center gap-2 rounded-full"
-                    >
-                      <a
-                        href={linkedinUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        <Linkedin className="size-4" />
-                        LinkedIn
-                      </a>
-                    </Button>
-                  </div>
                 </div>
-              </div>
-            </CometCard>
+              </CometCard>
+
+              {mobileBubbles.map((bubble, i) => (
+                <motion.a
+                  key={bubble.text}
+                  href={bubble.link}
+                  className="absolute lg:hidden"
+                  style={{ ...orbitPositions[i], x: "-50%" }}
+                  initial={{ opacity: 0, scale: 0 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{
+                    delay: 0.5 + i * 0.1,
+                    type: "spring",
+                    stiffness: 260,
+                    damping: 20,
+                  }}
+                  aria-label={`Navigate to ${bubble.text}`}
+                >
+                  <motion.div
+                    className="relative w-12 h-12 rounded-full overflow-hidden"
+                    style={{
+                      background: bubble.color,
+                      boxShadow: `0 4px 15px ${bubble.color}50, 0 0 20px ${bubble.color}30`,
+                    }}
+                    animate={{
+                      ...wanderPaths[i],
+                      scale: [1, 1.04, 1, 0.97, 1],
+                    }}
+                    transition={{
+                      x: { duration: 6 + i * 1.2, repeat: Infinity, ease: "easeInOut" },
+                      y: { duration: 7 + i * 1.4, repeat: Infinity, ease: "easeInOut" },
+                      scale: { duration: 4 + i * 0.5, repeat: Infinity, ease: "easeInOut" },
+                    }}
+                  >
+                    <div
+                      className="absolute inset-0 rounded-full"
+                      style={{
+                        background:
+                          "radial-gradient(circle at 65% 65%, rgba(0,0,0,0.35) 0%, transparent 70%)",
+                      }}
+                    />
+                    <div
+                      className="absolute inset-0 rounded-full"
+                      style={{
+                        background:
+                          "radial-gradient(circle at 30% 25%, rgba(255,255,255,0.6) 0%, rgba(255,255,255,0.1) 35%, transparent 55%)",
+                      }}
+                    />
+                    <div
+                      className="absolute inset-0.5 rounded-full"
+                      style={{
+                        background:
+                          "linear-gradient(135deg, rgba(255,255,255,0.25) 0%, transparent 45%)",
+                      }}
+                    />
+                    <div className="relative z-10 flex items-center justify-center w-full h-full">
+                      <bubble.Icon
+                        size={22}
+                        color="rgba(255,255,255,0.9)"
+                        weight="duotone"
+                      />
+                    </div>
+                  </motion.div>
+                </motion.a>
+              ))}
+            </div>
           </motion.div>
           <motion.div
-            className="mt-6 flex flex-col items-center gap-2 lg:hidden"
+            className="mt-24 flex flex-col items-center gap-2 lg:hidden"
             variants={staggerItem}
           >
             <a

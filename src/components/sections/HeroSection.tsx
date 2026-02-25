@@ -26,36 +26,12 @@ const githubUrl = "https://github.com";
 const linkedinUrl = "https://linkedin.com";
 
 const flowingMenuItems = [
-  {
-    link: "#about",
-    text: "About",
-    image: "https://placehold.co/200x100/6366f1/fff?text=About",
-  },
-  {
-    link: "#experience",
-    text: "Experience",
-    image: "https://placehold.co/200x100/8b5cf6/fff?text=Work",
-  },
-  {
-    link: "#education",
-    text: "Education",
-    image: "https://placehold.co/200x100/7c3aed/fff?text=Edu",
-  },
-  {
-    link: "#skills",
-    text: "Skills",
-    image: "https://placehold.co/200x100/6d28d9/fff?text=Skills",
-  },
-  {
-    link: "#projects",
-    text: "Projects",
-    image: "https://placehold.co/200x100/5b21b6/fff?text=Projects",
-  },
-  {
-    link: "#contact",
-    text: "Contact",
-    image: "https://placehold.co/200x100/4c1d95/fff?text=Contact",
-  },
+  { link: "#about", text: "About" },
+  { link: "#experience", text: "Experience" },
+  { link: "#education", text: "Education" },
+  { link: "#skills", text: "Skills" },
+  { link: "#projects", text: "Projects" },
+  { link: "#contact", text: "Contact" },
 ];
 
 export function HeroSection() {
@@ -84,7 +60,7 @@ export function HeroSection() {
   return (
     <section
       id="hero"
-      className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden px-6 py-12 lg:flex-row lg:items-center lg:justify-center lg:gap-12"
+      className="relative flex min-h-screen flex-col items-center justify-center overflow-visible px-6 py-12 lg:flex-row lg:items-center lg:justify-center lg:gap-12"
     >
       <div className="mx-auto flex w-full max-w-6xl flex-col gap-10 lg:flex-row lg:items-stretch lg:justify-between lg:gap-12">
         {/* Left: Comet Card (profile / Pokemon-style card) */}

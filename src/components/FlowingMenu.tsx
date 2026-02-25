@@ -1,11 +1,58 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { gsap } from 'gsap';
+import {
+  IdentificationCardIcon,
+  BriefcaseIcon,
+  GraduationCapIcon,
+  HeadCircuitIcon,
+  GithubLogoIcon,
+  EnvelopeSimpleIcon,
+} from '@phosphor-icons/react';
 
 interface MenuItemData {
   link: string;
   text: string;
-  image: string;
 }
+
+const MENU_ICONS: Record<
+  string,
+  {
+    Icon: React.ComponentType<{ size?: number; color?: string; weight?: 'duotone' }>;
+    color: string;
+    iconBgClass: string;
+  }
+> = {
+  About: {
+    Icon: IdentificationCardIcon,
+    color: '#6366f1',
+    iconBgClass: 'bg-indigo-100 dark:bg-indigo-200',
+  },
+  Experience: {
+    Icon: BriefcaseIcon,
+    color: '#8b5cf6',
+    iconBgClass: 'bg-violet-100 dark:bg-violet-200',
+  },
+  Education: {
+    Icon: GraduationCapIcon,
+    color: '#7c3aed',
+    iconBgClass: 'bg-purple-100 dark:bg-purple-200',
+  },
+  Skills: {
+    Icon: HeadCircuitIcon,
+    color: '#06b6d4',
+    iconBgClass: 'bg-cyan-100 dark:bg-cyan-200',
+  },
+  Projects: {
+    Icon: GithubLogoIcon,
+    color: '#5b21b6',
+    iconBgClass: 'bg-violet-100 dark:bg-violet-200',
+  },
+  Contact: {
+    Icon: EnvelopeSimpleIcon,
+    color: '#4c1d95',
+    iconBgClass: 'bg-purple-100 dark:bg-purple-200',
+  },
+};
 
 interface FlowingMenuProps {
   items?: MenuItemData[];
@@ -26,11 +73,14 @@ interface MenuItemProps extends MenuItemData {
   borderColor: string;
   className?: string;
   showBorder?: boolean;
+  iconComponent?: React.ComponentType<{ size?: number; color?: string; weight?: 'duotone' }>;
+  iconColor?: string;
+  iconBgClass?: string;
 }
 
 const FlowingMenu: React.FC<FlowingMenuProps> = ({
   items = [],
-  speed = 15,
+  speed = 5,
   textColor = '#fff',
   bgColor = '#060010',
   marqueeBgColor = '#fff',
@@ -43,6 +93,7 @@ const FlowingMenu: React.FC<FlowingMenuProps> = ({
   const renderItem = (label: string, layoutClassName: string) => {
     const item = itemLookup.get(label.toLowerCase());
     if (!item) return null;
+    const config = MENU_ICONS[label];
 
     return (
       <div className={`${layoutClassName} overflow-hidden rounded-2xl`}>
@@ -54,6 +105,9 @@ const FlowingMenu: React.FC<FlowingMenuProps> = ({
           marqueeTextColor={marqueeTextColor}
           borderColor={borderColor}
           className="h-full w-full rounded-2xl"
+          iconComponent={config?.Icon}
+          iconColor={config?.color}
+          iconBgClass={config?.iconBgClass ?? ''}
         />
       </div>
     );
@@ -68,10 +122,6 @@ const FlowingMenu: React.FC<FlowingMenuProps> = ({
           aria-hidden="true"
         >
           <span className="relative z-10 text-xs uppercase tracking-[0.35em] text-muted-foreground">Placeholder</span>
-          <div
-            className="pointer-events-none absolute inset-0 z-20 rounded-2xl bg-[url('/noise.webp')] bg-repeat bg-size-[200px_200px] opacity-15"
-            aria-hidden
-          />
         </div>
         {renderItem('Experience', 'col-span-3 row-span-1')}
         {renderItem('Education', 'col-span-3 row-span-1')}
@@ -86,14 +136,16 @@ const FlowingMenu: React.FC<FlowingMenuProps> = ({
 const MenuItem: React.FC<MenuItemProps> = ({
   link,
   text,
-  image,
   speed,
   textColor,
   marqueeBgColor,
   marqueeTextColor,
   borderColor,
   className = '',
-  showBorder = true
+  showBorder = true,
+  iconComponent: Icon,
+  iconColor,
+  iconBgClass = '',
 }) => {
   const itemRef = useRef<HTMLDivElement>(null);
   const marqueeRef = useRef<HTMLDivElement>(null);
@@ -126,7 +178,7 @@ const MenuItem: React.FC<MenuItemProps> = ({
     calculateRepetitions();
     window.addEventListener('resize', calculateRepetitions);
     return () => window.removeEventListener('resize', calculateRepetitions);
-  }, [text, image]);
+  }, [text, Icon]);
 
   useEffect(() => {
     const setupMarquee = () => {
@@ -155,7 +207,7 @@ const MenuItem: React.FC<MenuItemProps> = ({
         animationRef.current.kill();
       }
     };
-  }, [text, image, repetitions, speed]);
+  }, [text, Icon, repetitions, speed]);
 
   const handleMouseEnter = (ev: React.MouseEvent<HTMLAnchorElement>) => {
     if (!itemRef.current || !marqueeRef.current || !marqueeInnerRef.current) return;
@@ -197,22 +249,25 @@ const MenuItem: React.FC<MenuItemProps> = ({
         className="absolute top-0 left-0 z-10 w-full h-full overflow-hidden pointer-events-none translate-y-[101%] bg-black text-white dark:bg-white dark:text-black"
         ref={marqueeRef}
       >
-        <div className="h-full w-fit flex text-inherit" ref={marqueeInnerRef}>
+        <div
+          className="pointer-events-none absolute inset-0 z-10 bg-[url('/noise.webp')] bg-repeat bg-size-[200px_200px] opacity-25 mix-blend-screen dark:invert dark:mix-blend-multiply"
+          aria-hidden
+        />
+        <div className="relative z-15 h-full w-fit flex text-inherit" ref={marqueeInnerRef}>
           {[...Array(safeRepetitions)].map((_, idx) => (
-            <div className="marquee-part flex items-center shrink-0 text-inherit" key={idx}>
-              <span className="whitespace-nowrap uppercase font-normal text-[4vh] leading-none px-[1vw]">{text}</span>
-              <div
-                className="w-[200px] h-[7vh] my-[2em] mx-[2vw] py-[1em] rounded-[50px] bg-cover bg-center"
-                style={{ backgroundImage: `url(${image})` }}
-              />
+            <div className="marquee-part flex items-center gap-10 shrink-0 text-inherit" key={idx}>
+              <span className="whitespace-nowrap uppercase font-normal text-[4vh] leading-none pl-10">{text}</span>
+              {Icon && iconColor ? (
+                <div
+                  className={`relative z-20 flex items-center justify-center w-32 h-12 shrink-0 rounded-2xl p-3 ${iconBgClass}`}
+                >
+                  <Icon size={42} color={iconColor} weight="duotone" />
+                </div>
+              ) : null}
             </div>
           ))}
         </div>
       </div>
-      <div
-        className="pointer-events-none absolute inset-0 z-20 rounded-2xl bg-[url('/noise.webp')] bg-repeat bg-size-[200px_200px] opacity-15"
-        aria-hidden
-      />
     </div>
   );
 };

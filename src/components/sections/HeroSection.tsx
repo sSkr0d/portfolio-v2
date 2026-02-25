@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { motion } from "framer-motion";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { ArrowDown, Briefcase, Github, Linkedin, MapPin } from "lucide-react";
 import {
   IdentificationCardIcon,
@@ -13,17 +13,9 @@ import {
   EnvelopeSimpleIcon,
 } from "@phosphor-icons/react";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { CometCard } from "@/components/ui/comet-card";
+import { AnimatedCardReveal } from "@/components/AnimatedCardReveal";
 import FlowingMenu from "@/components/FlowingMenu";
-import {
-  fadeInUp,
-  staggerContainer,
-  staggerItem,
-  float,
-  viewportOnce,
-} from "@/lib/motion";
-import { cn } from "@/lib/utils";
 
 const name = "Mohd Hafiz Jumahiddin";
 const role = "Full Stack Developer";
@@ -72,6 +64,11 @@ const wanderPaths = [
 export function HeroSection() {
   const cardRef = useRef<HTMLDivElement>(null);
   const [menuHeight, setMenuHeight] = useState<number | null>(null);
+  const [cardAnimDone, setCardAnimDone] = useState(false);
+
+  const handleCardAnimComplete = useCallback(() => {
+    setCardAnimDone(true);
+  }, []);
 
   useEffect(() => {
     if (!cardRef.current) return;
@@ -99,15 +96,10 @@ export function HeroSection() {
     >
       <div className="mx-auto flex w-full max-w-6xl flex-col gap-10 lg:flex-row lg:items-stretch lg:justify-between lg:gap-12">
         {/* Left: Comet Card (profile / Pokemon-style card) */}
-        <motion.div
-          className="flex shrink-0 flex-col items-center lg:items-start"
-          variants={staggerContainer}
-          initial="hidden"
-          whileInView="visible"
-          viewport={viewportOnce}
-        >
-          <motion.div variants={staggerItem} ref={cardRef}>
+        <div className="flex shrink-0 flex-col items-center lg:items-start">
+          <div ref={cardRef}>
             <div className="relative">
+              <AnimatedCardReveal onComplete={handleCardAnimComplete}>
               <CometCard className="relative z-10 w-[280px] max-w-[320px] sm:w-[300px]">
                 <div className="relative overflow-hidden rounded-2xl border bg-card text-card-foreground shadow-xl">
                   <div className="p-4">
@@ -182,8 +174,9 @@ export function HeroSection() {
                   </div>
                 </div>
               </CometCard>
+              </AnimatedCardReveal>
 
-              {mobileBubbles.map((bubble, i) => (
+              {cardAnimDone && mobileBubbles.map((bubble, i) => (
                 <motion.a
                   key={bubble.text}
                   href={bubble.link}
@@ -192,7 +185,7 @@ export function HeroSection() {
                   initial={{ opacity: 0, scale: 0 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{
-                    delay: 0.5 + i * 0.1,
+                    delay: 0.15 + i * 0.08,
                     type: "spring",
                     stiffness: 260,
                     damping: 20,
@@ -247,21 +240,25 @@ export function HeroSection() {
                 </motion.a>
               ))}
             </div>
-          </motion.div>
-          <motion.div
-            className="mt-24 flex flex-col items-center gap-2 lg:hidden"
-            variants={staggerItem}
-          >
-            <a
-              href="#about"
-              className="flex flex-col items-center gap-1 text-muted-foreground transition-colors hover:text-foreground"
-              aria-label="Scroll to about section"
+          </div>
+          {cardAnimDone && (
+            <motion.div
+              className="mt-24 flex flex-col items-center gap-2 lg:hidden"
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.5 }}
             >
-              <ArrowDown className="size-5 animate-bounce" />
-              <span className="text-xs">Scroll</span>
-            </a>
-          </motion.div>
-        </motion.div>
+              <a
+                href="#about"
+                className="flex flex-col items-center gap-1 text-muted-foreground transition-colors hover:text-foreground"
+                aria-label="Scroll to about section"
+              >
+                <ArrowDown className="size-5 animate-bounce" />
+                <span className="text-xs">Scroll</span>
+              </a>
+            </motion.div>
+          )}
+        </div>
 
         {/* Right: Flowing Menu (desktop only) */}
         <div

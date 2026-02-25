@@ -265,7 +265,16 @@ export function HeroSection() {
           className="hidden flex-1 overflow-hidden lg:flex lg:min-h-0"
           style={menuHeight ? { height: menuHeight } : undefined}
         >
-          <FlowingMenu items={flowingMenuItems} className="h-full w-full" />
+          {cardAnimDone && (
+            <motion.div
+              className="h-full w-full"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.5 }}
+            >
+              <FlowingMenu items={flowingMenuItems} className="h-full w-full" />
+            </motion.div>
+          )}
         </div>
       </div>
     </section>

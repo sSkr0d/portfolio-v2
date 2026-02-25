@@ -63,6 +63,11 @@ export function AnimatedCardReveal({
   onCompleteRef.current = onComplete;
 
   useEffect(() => {
+    if ("scrollRestoration" in history) {
+      history.scrollRestoration = "manual";
+    }
+    window.scrollTo(0, 0);
+
     const wrapper = wrapperRef.current;
     const flipper = flipperRef.current;
     const placeholder = placeholderRef.current;

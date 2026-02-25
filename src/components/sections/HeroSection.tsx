@@ -180,7 +180,7 @@ export function HeroSection() {
                 <motion.a
                   key={bubble.text}
                   href={bubble.link}
-                  className="absolute lg:hidden"
+                  className="absolute z-20 lg:hidden"
                   style={{ ...orbitPositions[i], x: "-50%" }}
                   initial={{ opacity: 0, scale: 0 }}
                   animate={{ opacity: 1, scale: 1 }}
@@ -241,23 +241,21 @@ export function HeroSection() {
               ))}
             </div>
           </div>
-          {cardAnimDone && (
-            <motion.div
-              className="mt-24 flex flex-col items-center gap-2 lg:hidden"
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.5 }}
+          <motion.div
+            className={`mt-24 flex flex-col items-center gap-2 lg:hidden ${!cardAnimDone ? "pointer-events-none" : ""}`}
+            initial={{ opacity: 0 }}
+            animate={cardAnimDone ? { opacity: 1 } : undefined}
+            transition={{ delay: 0.5, duration: 0.4 }}
+          >
+            <a
+              href="#about"
+              className="flex flex-col items-center gap-1 text-muted-foreground transition-colors hover:text-foreground"
+              aria-label="Scroll to about section"
             >
-              <a
-                href="#about"
-                className="flex flex-col items-center gap-1 text-muted-foreground transition-colors hover:text-foreground"
-                aria-label="Scroll to about section"
-              >
-                <ArrowDown className="size-5 animate-bounce" />
-                <span className="text-xs">Scroll</span>
-              </a>
-            </motion.div>
-          )}
+              <ArrowDown className="size-5 animate-bounce" />
+              <span className="text-xs">Scroll</span>
+            </a>
+          </motion.div>
         </div>
 
         {/* Right: Flowing Menu (desktop only) */}

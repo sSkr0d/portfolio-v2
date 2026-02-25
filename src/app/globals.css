@@ -126,6 +126,12 @@
   body {
     @apply bg-background text-foreground;
   }
+  html {
+    scrollbar-width: none;
+  }
+  html::-webkit-scrollbar {
+    display: none;
+  }
 }
 
 /* CometCard 3D tilt: perspective and preserve-3d */

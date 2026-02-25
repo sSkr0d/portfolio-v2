@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { CustomScrollbar } from "@/components/CustomScrollbar";
 import { HeroInViewProvider } from "@/components/HeroInViewProvider";
 import { Navbar } from "@/components/Navbar";
 import { ThemeProvider } from "@/components/ThemeProvider";
@@ -44,6 +45,7 @@ export default function RootLayout({
               {children}
             </HeroInViewProvider>
           </TooltipProvider>
+          <CustomScrollbar />
         </ThemeProvider>
       </body>
     </html>

@@ -16,6 +16,7 @@ import { Button } from "@/components/ui/button";
 import { CometCard } from "@/components/ui/comet-card";
 import { AnimatedCardReveal } from "@/components/AnimatedCardReveal";
 import FlowingMenu from "@/components/FlowingMenu";
+import { useHeroInView } from "@/components/HeroInViewProvider";
 
 const name = "Mohd Hafiz Jumahiddin";
 const role = "Full Stack Developer";
@@ -65,10 +66,16 @@ export function HeroSection() {
   const cardRef = useRef<HTMLDivElement>(null);
   const [menuHeight, setMenuHeight] = useState<number | null>(null);
   const [cardAnimDone, setCardAnimDone] = useState(false);
+  const [menuVisible, setMenuVisible] = useState(false);
+  const { isHeroInView } = useHeroInView();
 
   const handleCardAnimComplete = useCallback(() => {
     setCardAnimDone(true);
   }, []);
+
+  useEffect(() => {
+    if (!isHeroInView) setMenuVisible(false);
+  }, [isHeroInView]);
 
   useEffect(() => {
     if (!cardRef.current) return;
@@ -263,14 +270,19 @@ export function HeroSection() {
           className="hidden flex-1 overflow-hidden lg:flex lg:min-h-0"
           style={menuHeight ? { height: menuHeight } : undefined}
         >
-          {cardAnimDone && (
+          {cardAnimDone && isHeroInView && (
             <motion.div
               className="h-full w-full"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.5 }}
+              onAnimationComplete={() => setMenuVisible(true)}
             >
-              <FlowingMenu items={flowingMenuItems} className="h-full w-full" />
+              <FlowingMenu
+                items={flowingMenuItems}
+                className="h-full w-full"
+                startDecrypt={menuVisible}
+              />
             </motion.div>
           )}
         </div>

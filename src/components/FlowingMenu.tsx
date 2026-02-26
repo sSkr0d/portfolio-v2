@@ -8,6 +8,7 @@ import {
   GithubLogoIcon,
   EnvelopeSimpleIcon,
 } from '@phosphor-icons/react';
+import DecryptedText from '@/components/DecryptedText';
 
 interface MenuItemData {
   link: string;
@@ -63,6 +64,8 @@ interface FlowingMenuProps {
   marqueeTextColor?: string;
   borderColor?: string;
   className?: string;
+  /** When true, starts the decrypted-text animation on menu labels (e.g. after menu fade-in). */
+  startDecrypt?: boolean;
 }
 
 interface MenuItemProps extends MenuItemData {
@@ -76,6 +79,8 @@ interface MenuItemProps extends MenuItemData {
   iconComponent?: React.ComponentType<{ size?: number; color?: string; weight?: 'duotone' }>;
   iconColor?: string;
   iconBgClass?: string;
+  startDecrypt?: boolean;
+  decryptDelay?: number;
 }
 
 const FlowingMenu: React.FC<FlowingMenuProps> = ({
@@ -86,17 +91,19 @@ const FlowingMenu: React.FC<FlowingMenuProps> = ({
   marqueeBgColor = '#fff',
   marqueeTextColor = '#060010',
   borderColor = '#fff',
-  className = ''
+  className = '',
+  startDecrypt = false
 }) => {
   const itemLookup = new Map(items.map((item) => [item.text.toLowerCase(), item]));
+  const staggerMs = 320;
 
-  const renderItem = (label: string, layoutClassName: string) => {
+  const renderItem = (label: string, layoutClassName: string, index: number) => {
     const item = itemLookup.get(label.toLowerCase());
     if (!item) return null;
     const config = MENU_ICONS[label];
 
     return (
-      <div className={`${layoutClassName} overflow-hidden rounded-2xl`}>
+      <div key={label} className={`${layoutClassName} overflow-hidden rounded-2xl`}>
         <MenuItem
           {...item}
           speed={speed}
@@ -108,6 +115,8 @@ const FlowingMenu: React.FC<FlowingMenuProps> = ({
           iconComponent={config?.Icon}
           iconColor={config?.color}
           iconBgClass={config?.iconBgClass ?? ''}
+          startDecrypt={startDecrypt}
+          decryptDelay={index * staggerMs}
         />
       </div>
     );
@@ -116,18 +125,18 @@ const FlowingMenu: React.FC<FlowingMenuProps> = ({
   return (
     <div className={`w-full h-full overflow-hidden bg-transparent ${className}`.trim()}>
       <nav className="grid h-full w-full grid-cols-6 grid-rows-3 gap-3">
-        {renderItem('About', 'col-span-4 row-span-1')}
+        {renderItem('About', 'col-span-4 row-span-1', 0)}
         <div
           className="col-span-2 row-span-1 relative flex items-center justify-center overflow-hidden rounded-2xl border border-border bg-gray-200/50 backdrop-blur-md dark:bg-black/50 dark:backdrop-blur-md"
           aria-hidden="true"
         >
           <span className="relative z-10 text-xs uppercase tracking-[0.35em] text-muted-foreground">Placeholder</span>
         </div>
-        {renderItem('Experience', 'col-span-3 row-span-1')}
-        {renderItem('Education', 'col-span-3 row-span-1')}
-        {renderItem('Skills', 'col-span-2 row-span-1')}
-        {renderItem('Projects', 'col-span-2 row-span-1')}
-        {renderItem('Contact', 'col-span-2 row-span-1')}
+        {renderItem('Experience', 'col-span-3 row-span-1', 1)}
+        {renderItem('Education', 'col-span-3 row-span-1', 2)}
+        {renderItem('Skills', 'col-span-2 row-span-1', 3)}
+        {renderItem('Projects', 'col-span-2 row-span-1', 4)}
+        {renderItem('Contact', 'col-span-2 row-span-1', 5)}
       </nav>
     </div>
   );
@@ -146,13 +155,25 @@ const MenuItem: React.FC<MenuItemProps> = ({
   iconComponent: Icon,
   iconColor,
   iconBgClass = '',
+  startDecrypt = false,
+  decryptDelay = 0,
 }) => {
   const itemRef = useRef<HTMLDivElement>(null);
   const marqueeRef = useRef<HTMLDivElement>(null);
   const marqueeInnerRef = useRef<HTMLDivElement>(null);
   const animationRef = useRef<gsap.core.Tween | null>(null);
   const [repetitions, setRepetitions] = useState(4);
+  const [delayedDecryptTrigger, setDelayedDecryptTrigger] = useState(false);
   const safeRepetitions = Number.isFinite(repetitions) && repetitions > 0 ? repetitions : 4;
+
+  useEffect(() => {
+    if (!startDecrypt) {
+      setDelayedDecryptTrigger(false);
+      return;
+    }
+    const t = setTimeout(() => setDelayedDecryptTrigger(true), decryptDelay);
+    return () => clearTimeout(t);
+  }, [startDecrypt, decryptDelay]);
 
   const animationDefaults = { duration: 0.6, ease: 'expo' };
 
@@ -243,7 +264,15 @@ const MenuItem: React.FC<MenuItemProps> = ({
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
       >
-        {text}
+        <DecryptedText
+          text={text}
+          trigger={delayedDecryptTrigger}
+          sequential
+          speed={45}
+          maxIterations={12}
+          className="text-foreground"
+          parentClassName="font-semibold uppercase text-[4vh]"
+        />
       </a>
       <div
         className="absolute top-0 left-0 z-10 w-full h-full overflow-hidden pointer-events-none translate-y-[101%] bg-black text-white dark:bg-white dark:text-black"

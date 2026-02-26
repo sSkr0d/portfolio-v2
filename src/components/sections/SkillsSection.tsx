@@ -1,10 +1,17 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { motion } from "framer-motion";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { AnimatePresence, motion } from "framer-motion";
+import { ArrowLeft, ArrowRight } from "lucide-react";
+import { useTheme } from "next-themes";
 import { skills } from "@/lib/content";
 import { fadeInUp, staggerContainer, viewportOnce } from "@/lib/motion";
+
+/** Skills that use theme-based glow (white in dark mode, black in light) instead of brand color */
+const BLACK_OR_NEAR_BLACK_HEX = ["#000000", "#0b0d0e"];
+function isBlackBubble(hex: string) {
+  return BLACK_OR_NEAR_BLACK_HEX.includes(hex.toLowerCase().trim());
+}
 
 const wanderPaths = [
   { x: [0, 3, -4, 5, -2, 1, 0], y: [0, -5, 2, -3, 6, -1, 0] },
@@ -23,26 +30,18 @@ export function SkillsSection() {
   const sectionRef = useRef<HTMLElement>(null);
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const hoveredRef = useRef<number | null>(null);
-  const [isDarkMode, setIsDarkMode] = useState(false);
+  const [activeIndex, setActiveIndex] = useState(0);
+  const { resolvedTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
 
   const animRef = useRef({ rotation: 0, progress: 0, inView: false, settle: 0, hoverGate: 0 });
   const [anim, setAnim] = useState({ rotation: 0, progress: 0, canStop: false });
 
   useEffect(() => {
-    if (typeof window === "undefined") return;
-
-    const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
-    const handleChange = (event: MediaQueryListEvent) => {
-      setIsDarkMode(event.matches);
-    };
-
-    setIsDarkMode(mediaQuery.matches);
-    mediaQuery.addEventListener("change", handleChange);
-
-    return () => {
-      mediaQuery.removeEventListener("change", handleChange);
-    };
+    setMounted(true);
   }, []);
+
+  const isDarkMode = mounted && resolvedTheme === "dark";
 
   useEffect(() => {
     const el = sectionRef.current;
@@ -135,6 +134,12 @@ export function SkillsSection() {
     }
   };
 
+  // Reset hover state when switching categories
+  useEffect(() => {
+    hoveredRef.current = null;
+    setHoveredIndex(null);
+  }, [activeIndex]);
+
   const t = anim.progress;
   const canStop = anim.canStop;
   const finalRadius = 38;
@@ -143,6 +148,14 @@ export function SkillsSection() {
   const tilt = lerp(Math.PI / 4, 0, t);
   const introScale = lerp(0.3, 1, t);
   const introOpacity = Math.min(1, t * 2.5);
+
+  const goPrev = () => {
+    setActiveIndex((prev) => (prev - 1 + skills.length) % skills.length);
+  };
+
+  const goNext = () => {
+    setActiveIndex((prev) => (prev + 1) % skills.length);
+  };
 
   return (
     <section
@@ -166,25 +179,91 @@ export function SkillsSection() {
           whileInView="visible"
           viewport={viewportOnce}
         >
-          <Tabs defaultValue={skills[0]?.name ?? ""} className="w-full">
-            <TabsList className="mb-6 flex h-auto flex-wrap gap-2 bg-muted/50 p-2">
-              {skills.map((cat) => (
-                <TabsTrigger
-                  key={cat.name}
-                  value={cat.name}
-                  className="rounded-full px-4 py-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
-                >
-                  {cat.name}
-                </TabsTrigger>
-              ))}
-            </TabsList>
-            {skills.map((category) => {
-              const count = category.items.length || 1;
+          <div className="w-full">
+            <div className="relative mx-auto aspect-square max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg">
+              {/* Center controls: skill type + arrows + dots */}
+              <div className="pointer-events-none absolute inset-0 z-20 flex items-center justify-center">
+                <div className="pointer-events-auto flex flex-col items-center gap-2">
+                  {/* Skill type label with optional line break */}
+                  <div className="text-center text-xs font-semibold uppercase tracking-[0.25em] text-muted-foreground">
+                    {(() => {
+                      const name = skills[activeIndex]?.name ?? "";
+                      const parts = name.split(" ");
+                      if (parts.length <= 1) {
+                        return <span className="block">{name}</span>;
+                      }
+                      const first = parts[0];
+                      const rest = parts.slice(1).join(" ");
+                      return (
+                        <>
+                          <span className="block">{first}</span>
+                          <span className="block">{rest}</span>
+                        </>
+                      );
+                    })()}
+                  </div>
 
-              return (
-                <TabsContent key={category.name} value={category.name} className="mt-0">
-                  <div className="relative mx-auto aspect-square max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg">
-                    {category.items.map((skill, index) => {
+                  {/* Arrow • • • Arrow row */}
+                  <div className="flex items-center gap-3">
+                    <button
+                      type="button"
+                      onClick={goPrev}
+                      className="flex h-8 w-8 items-center justify-center rounded-full border border-border/60 bg-background/80 text-muted-foreground shadow-sm transition-colors hover:border-primary/60 hover:text-primary cursor-default"
+                      aria-label="Previous skill group"
+                    >
+                      <ArrowLeft className="h-4 w-4" />
+                    </button>
+
+                    <div className="flex items-center gap-1.5">
+                      {skills.map((cat, idx) => (
+                        <button
+                          key={cat.name}
+                          type="button"
+                          onClick={() => setActiveIndex(idx)}
+                          className={`h-1.5 w-3 rounded-full transition-all ${
+                            idx === activeIndex
+                              ? "bg-primary"
+                              : "bg-muted-foreground/40 hover:bg-muted-foreground/70"
+                          }`}
+                          aria-label={`Go to ${cat.name}`}
+                        />
+                      ))}
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={goNext}
+                      className="flex h-8 w-8 items-center justify-center rounded-full border border-border/60 bg-background/80 text-muted-foreground shadow-sm transition-colors hover:border-primary/60 hover:text-primary cursor-default"
+                      aria-label="Next skill group"
+                    >
+                      <ArrowRight className="h-4 w-4" />
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <AnimatePresence mode="wait">
+                {skills[activeIndex] && (
+                  <motion.div
+                    key={skills[activeIndex].name}
+                    className="relative h-full w-full cursor-grab active:cursor-grabbing"
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.9 }}
+                    transition={{ duration: 0.35, ease: "easeInOut" }}
+                    drag="x"
+                    dragConstraints={{ left: 0, right: 0 }}
+                    dragElastic={0.15}
+                    onDragEnd={(_, info) => {
+                      if (info.offset.x > 60) {
+                        goPrev();
+                      } else if (info.offset.x < -60) {
+                        goNext();
+                      }
+                    }}
+                  >
+                    {skills[activeIndex].items.map((skill, index) => {
+                      const count = skills[activeIndex].items.length || 1;
                       const baseAngle = (2 * Math.PI * index) / count;
                       const angle = baseAngle + anim.rotation;
 
@@ -194,15 +273,16 @@ export function SkillsSection() {
                       const x = rawX * Math.cos(tilt) - rawY * Math.sin(tilt);
                       const y = rawX * Math.sin(tilt) + rawY * Math.cos(tilt);
 
-                      const topPos = 50 + y;
-                      const leftPos = 50 + x;
+                      // Round positions so SSR and client compute identical strings (avoids hydration mismatch)
+                      const topPos = Number((50 + y).toFixed(3));
+                      const leftPos = Number((50 + x).toFixed(3));
 
                       const path = wanderPaths[index % wanderPaths.length];
                       const isHovered = hoveredIndex === index;
                       const shouldStop = isHovered && canStop;
 
-                      const isBlack = skill.color.toLowerCase() === "#000000";
-                      const glowColor = isBlack
+                      const useThemeGlow = isBlackBubble(skill.color);
+                      const glowColor = useThemeGlow
                         ? isDarkMode
                           ? "#ffffff"
                           : "#000000"
@@ -345,11 +425,11 @@ export function SkillsSection() {
                         </div>
                       );
                     })}
-                  </div>
-                </TabsContent>
-              );
-            })}
-          </Tabs>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+          </div>
         </motion.div>
       </div>
     </section>

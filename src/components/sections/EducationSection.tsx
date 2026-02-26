@@ -32,7 +32,7 @@ export function EducationSection() {
           {education.map((entry) => (
             <motion.div key={entry.id} variants={staggerItem}>
               <Card className="overflow-hidden transition-shadow hover:shadow-md">
-                <CardContent className="pt-6">
+                <CardContent>
                   <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
                     <div>
                       <h3 className="text-lg font-semibold">{entry.degree}</h3>

@@ -20,10 +20,11 @@ export const experience: ExperienceEntry[] = [
     endDate: "August 2025",
     description: "Developed a centralized web system for the Sabah State Government to manage official vehicle and driver bookings.",
     highlights: [
-      "Led migration to Next.js and improved Core Web Vitals by 40%",
-      "Mentored junior developers and established coding standards",
-      "Shipped multiple product features used by 100k+ users",
+      "Developed the system using Laravel, React, Tailwind, and MySQL, completed the development phase within 5 months.",
+      "Integrated 3 open-source map APIs (OpenStreetMap, Nominatim, ORS) to enable route generation.",
+      "Created system documentation and prepared a comprehensive user manual following government standards.",
+      "Spearheaded project handover to department staff for code refactoring, penetration testing, and deployment."
     ],
-    techStack: ["Next.js", "TypeScript", "React", "Node.js", "PostgreSQL"],
+    techStack: ["Laravel", "React", "Tailwind", "MySQL"],
   },
 ];

@@ -2,7 +2,7 @@
 
 import React, { useRef, useEffect, useState, useCallback } from 'react';
 
-type Phase = 'idle' | 'intro' | 'playing' | 'gameover';
+type Phase = 'intro' | 'playing' | 'gameover';
 type Direction = 'up' | 'down' | 'left' | 'right';
 interface Point {
   x: number;
@@ -47,7 +47,7 @@ const SnakeGame: React.FC<SnakeGameProps> = ({
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [phase, setPhase] = useState<Phase>('idle');
+  const [phase, setPhase] = useState<Phase>('intro');
   const [score, setScore] = useState(0);
   const [highScore, setHighScore] = useState(0);
 
@@ -60,7 +60,7 @@ const SnakeGame: React.FC<SnakeGameProps> = ({
   const scoreRef = useRef(0);
   const loopRef = useRef<number>(0);
   const lastTickRef = useRef(0);
-  const phaseRef = useRef<Phase>('idle');
+  const phaseRef = useRef<Phase>('intro');
 
   useEffect(() => {
     try {
@@ -434,19 +434,12 @@ const SnakeGame: React.FC<SnakeGameProps> = ({
   return (
     <div
       ref={containerRef}
-      onClick={phase === 'idle' ? () => setPhase('intro') : undefined}
-      className={`relative flex h-full w-full items-center justify-center overflow-hidden rounded-2xl border border-border bg-gray-200/50 backdrop-blur-md dark:bg-black/50 dark:backdrop-blur-md${phase === 'idle' ? ' cursor-pointer' : ''}`}
+      className="relative flex h-full w-full items-center justify-center overflow-hidden rounded-2xl border border-border bg-gray-200/50 backdrop-blur-md dark:bg-black/50 dark:backdrop-blur-md"
     >
       <canvas
         ref={canvasRef}
         className={`block${phase === 'playing' || phase === 'gameover' ? '' : ' hidden'}`}
       />
-
-      {phase === 'idle' && (
-        <span className="animate-pulse text-xs uppercase tracking-[0.35em] text-muted-foreground select-none">
-          Click me!
-        </span>
-      )}
 
       {phase === 'intro' && (
         <div className="flex flex-col items-center justify-center gap-2 p-3">
@@ -484,7 +477,7 @@ const SnakeGame: React.FC<SnakeGameProps> = ({
               Restart
             </button>
             <button
-              onClick={() => setPhase('idle')}
+              onClick={() => onPhaseChange?.('closed')}
               className="rounded-lg border border-white/30 px-3 py-1 text-[10px] font-semibold text-white transition-opacity hover:bg-white/10"
             >
               Close

@@ -9,7 +9,7 @@ import {
   EnvelopeSimpleIcon,
 } from '@phosphor-icons/react';
 import DecryptedText from '@/components/DecryptedText';
-import SnakeGame from '@/components/SnakeGame';
+import MiniGameLauncher from '@/components/MiniGameLauncher';
 
 interface MenuItemData {
   link: string;
@@ -98,8 +98,8 @@ const FlowingMenu: React.FC<FlowingMenuProps> = ({
   const itemLookup = new Map(items.map((item) => [item.text.toLowerCase(), item]));
   const staggerMs = 320;
 
-  const [snakePhase, setSnakePhase] = useState('idle');
-  const [snakeScore, setSnakeScore] = useState(0);
+  const [miniGamePhase, setMiniGamePhase] = useState('idle');
+  const [miniGameScore, setMiniGameScore] = useState(0);
 
   const renderItem = (label: string, layoutClassName: string, index: number) => {
     const item = itemLookup.get(label.toLowerCase());
@@ -128,17 +128,17 @@ const FlowingMenu: React.FC<FlowingMenuProps> = ({
 
   return (
     <div className={`relative w-full h-full overflow-visible bg-transparent ${className}`.trim()}>
-      {snakePhase === 'playing' && (
+      {miniGamePhase === 'playing' && (
         <div className="absolute -top-8 right-0 z-30 rounded-full border border-border bg-card/80 px-3 py-1 text-xs font-semibold text-foreground shadow-sm backdrop-blur-sm">
-          Score: {snakeScore}
+          Score: {miniGameScore}
         </div>
       )}
       <nav className="grid h-full w-full grid-cols-6 grid-rows-3 gap-3">
         {renderItem('About', 'col-span-4 row-span-1', 0)}
         <div className="col-span-2 row-span-1 overflow-hidden rounded-2xl">
-          <SnakeGame
-            onPhaseChange={setSnakePhase}
-            onScoreChange={setSnakeScore}
+          <MiniGameLauncher
+            onPhaseChange={setMiniGamePhase}
+            onScoreChange={setMiniGameScore}
           />
         </div>
         {renderItem('Experience', 'col-span-3 row-span-1', 1)}

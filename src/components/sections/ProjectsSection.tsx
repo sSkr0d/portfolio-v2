@@ -5,6 +5,8 @@ import { ExternalLink, Github } from "lucide-react";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { SectionTitleLoop } from "@/components/SectionTitleLoop";
+import { sectionTitles } from "@/lib/content/section-titles";
 import { projects } from "@/lib/content";
 import { fadeInUp, staggerContainer, staggerItem, scaleOnHover, viewportOnce } from "@/lib/motion";
 import { cn } from "@/lib/utils";
@@ -13,18 +15,10 @@ export function ProjectsSection() {
   return (
     <section
       id="projects"
-      className="scroll-mt-24 px-6 py-20 md:py-28"
+      className="scroll-mt-24 py-20 md:py-28"
     >
-      <div className="mx-auto max-w-5xl">
-        <motion.h2
-          className="mb-12 text-3xl font-bold tracking-tight sm:text-4xl"
-          variants={fadeInUp}
-          initial="hidden"
-          whileInView="visible"
-          viewport={viewportOnce}
-        >
-          Projects
-        </motion.h2>
+      <SectionTitleLoop config={sectionTitles.projects} className="-mx-6 mb-12" />
+      <div className="mx-auto max-w-5xl px-6">
         <motion.div
           className="grid gap-6 sm:grid-cols-2"
           variants={staggerContainer}

@@ -1,21 +1,24 @@
 "use client";
 
 import { Github, Linkedin, Mail, MapPin } from "lucide-react";
+import { SectionTitleLoop } from "@/components/SectionTitleLoop";
+import { sectionTitles } from "@/lib/content/section-titles";
 import { cn } from "@/lib/utils";
 
 const currentYear = new Date().getFullYear();
 const location = "Your City, Country";
 const email = "hello@example.com";
-const githubUrl = "https://github.com";
-const linkedinUrl = "https://linkedin.com";
+const githubUrl = "https://github.com/sSkr0d";
+const linkedinUrl = "https://linkedin.com/in/hafizjbi";
 
 export function FooterSection() {
   return (
     <footer
       id="contact"
-      className="scroll-mt-24 border-t bg-muted/30 px-6 py-12 md:py-16"
+      className="scroll-mt-24 border-t bg-muted/30 py-12 md:py-16"
     >
-      <div className="mx-auto flex max-w-4xl flex-col items-center gap-6 text-center">
+
+      <div className="mx-auto flex max-w-4xl flex-col items-center gap-6 px-6 text-center">
         <div className="flex flex-wrap items-center justify-center gap-6">
           <a
             href={`mailto:${email}`}

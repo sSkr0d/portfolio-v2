@@ -3,6 +3,8 @@
 import { motion } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { SectionTitleLoop } from "@/components/SectionTitleLoop";
+import { sectionTitles } from "@/lib/content/section-titles";
 import { education } from "@/lib/content";
 import { fadeInUp, staggerContainer, staggerItem, viewportOnce } from "@/lib/motion";
 
@@ -10,18 +12,10 @@ export function EducationSection() {
   return (
     <section
       id="education"
-      className="scroll-mt-24 px-6 py-20 md:py-28"
+      className="scroll-mt-24 py-20 md:py-28"
     >
-      <div className="mx-auto max-w-4xl">
-        <motion.h2
-          className="mb-12 text-3xl font-bold tracking-tight sm:text-4xl"
-          variants={fadeInUp}
-          initial="hidden"
-          whileInView="visible"
-          viewport={viewportOnce}
-        >
-          Education
-        </motion.h2>
+      <SectionTitleLoop config={sectionTitles.education} className="-mx-6 mb-12" />
+      <div className="mx-auto max-w-4xl px-6">
         <motion.div
           className="space-y-6"
           variants={staggerContainer}

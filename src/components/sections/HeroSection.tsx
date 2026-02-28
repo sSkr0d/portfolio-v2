@@ -23,8 +23,8 @@ const role = "Full Stack Developer";
 const location = "Kota Kinabalu, Sabah";
 const workStatus = "Freelance / Open to Work";
 const onlineStatus = "Online";
-const githubUrl = "https://github.com";
-const linkedinUrl = "https://linkedin.com";
+const githubUrl = "https://github.com/sSkr0d";
+const linkedinUrl = "https://linkedin.com/in/hafizjbi";
 
 const flowingMenuItems = [
   { link: "#about", text: "About" },

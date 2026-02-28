@@ -4,6 +4,8 @@ import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { useTheme } from "next-themes";
+import { SectionTitleLoop } from "@/components/SectionTitleLoop";
+import { sectionTitles } from "@/lib/content/section-titles";
 import { skills } from "@/lib/content";
 import { fadeInUp, staggerContainer, viewportOnce } from "@/lib/motion";
 
@@ -161,18 +163,10 @@ export function SkillsSection() {
     <section
       ref={sectionRef}
       id="skills"
-      className="scroll-mt-24 px-6 py-20 md:py-28"
+      className="scroll-mt-24 py-20 md:py-28"
     >
-      <div className="mx-auto max-w-4xl">
-        <motion.h2
-          className="mb-12 text-3xl font-bold tracking-tight sm:text-4xl"
-          variants={fadeInUp}
-          initial="hidden"
-          whileInView="visible"
-          viewport={viewportOnce}
-        >
-          Skills
-        </motion.h2>
+      <SectionTitleLoop config={sectionTitles.skills} className="-mx-6 mb-12" />
+      <div className="mx-auto max-w-4xl px-6">
         <motion.div
           variants={staggerContainer}
           initial="hidden"

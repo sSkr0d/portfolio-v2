@@ -141,3 +141,16 @@
 .transform-3d {
   transform-style: preserve-3d;
 }
+
+/* Section title loop marquee (same feel as curved-loop, speed 0.9) */
+@keyframes section-title-loop {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+.animate-section-title-loop {
+  animation: section-title-loop linear infinite;
+}

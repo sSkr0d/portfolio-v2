@@ -267,7 +267,7 @@ export function HeroSection() {
 
         {/* Right: Flowing Menu (desktop only) */}
         <div
-          className="hidden flex-1 overflow-hidden lg:flex lg:min-h-0"
+          className="hidden flex-1 overflow-visible lg:flex lg:min-h-0"
           style={menuHeight ? { height: menuHeight } : undefined}
         >
           {cardAnimDone && isHeroInView && (

@@ -9,6 +9,7 @@ import {
   EnvelopeSimpleIcon,
 } from '@phosphor-icons/react';
 import DecryptedText from '@/components/DecryptedText';
+import SnakeGame from '@/components/SnakeGame';
 
 interface MenuItemData {
   link: string;
@@ -97,6 +98,9 @@ const FlowingMenu: React.FC<FlowingMenuProps> = ({
   const itemLookup = new Map(items.map((item) => [item.text.toLowerCase(), item]));
   const staggerMs = 320;
 
+  const [snakePhase, setSnakePhase] = useState('idle');
+  const [snakeScore, setSnakeScore] = useState(0);
+
   const renderItem = (label: string, layoutClassName: string, index: number) => {
     const item = itemLookup.get(label.toLowerCase());
     if (!item) return null;
@@ -123,14 +127,19 @@ const FlowingMenu: React.FC<FlowingMenuProps> = ({
   };
 
   return (
-    <div className={`w-full h-full overflow-hidden bg-transparent ${className}`.trim()}>
+    <div className={`relative w-full h-full overflow-visible bg-transparent ${className}`.trim()}>
+      {snakePhase === 'playing' && (
+        <div className="absolute -top-8 right-0 z-30 rounded-full border border-border bg-card/80 px-3 py-1 text-xs font-semibold text-foreground shadow-sm backdrop-blur-sm">
+          Score: {snakeScore}
+        </div>
+      )}
       <nav className="grid h-full w-full grid-cols-6 grid-rows-3 gap-3">
         {renderItem('About', 'col-span-4 row-span-1', 0)}
-        <div
-          className="col-span-2 row-span-1 relative flex items-center justify-center overflow-hidden rounded-2xl border border-border bg-gray-200/50 backdrop-blur-md dark:bg-black/50 dark:backdrop-blur-md"
-          aria-hidden="true"
-        >
-          <span className="relative z-10 text-xs uppercase tracking-[0.35em] text-muted-foreground">Placeholder</span>
+        <div className="col-span-2 row-span-1 overflow-hidden rounded-2xl">
+          <SnakeGame
+            onPhaseChange={setSnakePhase}
+            onScoreChange={setSnakeScore}
+          />
         </div>
         {renderItem('Experience', 'col-span-3 row-span-1', 1)}
         {renderItem('Education', 'col-span-3 row-span-1', 2)}
